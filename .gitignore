@@ -1,0 +1,30 @@
+# IDE
+.idea/
+.vscode/
+
+# Java
+*.class
+target/
+build/
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Spring
+*.log
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Database
+*.sql.bak
