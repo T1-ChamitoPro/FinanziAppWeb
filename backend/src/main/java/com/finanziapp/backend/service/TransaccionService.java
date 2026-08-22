@@ -61,4 +61,26 @@ public class TransaccionService {
                 .balanceTotal(balance)
                 .build();
     }
+
+    public Transaccion actualizarTransaccion(Long id, TransaccionRequest request) {
+        Transaccion transaccion = transaccionRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Transacción no encontrada con ID: " + id));
+
+        Categoria categoria = categoriaRepository.findById(request.getIdCategoria())
+                .orElseThrow(() -> new IllegalArgumentException("Categoría no encontrada"));
+
+        transaccion.setMonto(request.getMonto());
+        transaccion.setDescripcion(request.getDescripcion());
+        transaccion.setFecha(request.getFecha());
+        transaccion.setCategoria(categoria);
+
+        return transaccionRepository.save(transaccion);
+    }
+
+    public void eliminarTransaccion(Long id) {
+        if (!transaccionRepository.existsById(id)) {
+            throw new IllegalArgumentException("La transacción no existe");
+        }
+        transaccionRepository.deleteById(id);
+    }
 }
