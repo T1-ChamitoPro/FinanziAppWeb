@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://finanziappweb.onrender.com',
+  baseURL: 'https://finanziappweb.onrender.com/api',
   headers: {
     'Content-Type': 'application/json',
   },
