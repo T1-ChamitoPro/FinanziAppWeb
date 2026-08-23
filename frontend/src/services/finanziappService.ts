@@ -71,3 +71,12 @@ export const actualizarTransaccion = (id: number, transaccion: TransaccionReques
 
 export const eliminarTransaccion = (id: number) =>
   api.delete(`/transacciones/${id}`);
+
+export interface CrearCategoriaDTO {
+  nombre: string;
+  tipo: 'INGRESO' | 'GASTO';
+}
+
+export const crearCategoria = async (data: CrearCategoriaDTO) => {
+  return await api.post<Categoria>('/categorias', data);
+};
