@@ -1,11 +1,11 @@
-# Paso 1: Compilar la aplicación con Java 17 o 21
-FROM eclipse-temurin:17-jdk-alpine AS build
+# Paso 1: Compilar la aplicación usando Java 25
+FROM eclipse-temurin:25-jdk-alpine AS build
 WORKDIR /app
 COPY . .
-RUN chmod +x gradlew && ./gradlew build -x test
+RUN chmod +x gradlew && ./gradlew build -x test --no-daemon
 
-# Paso 2: Ejecutar la aplicación
-FROM eclipse-temurin:17-jre-alpine
+# Paso 2: Crear la imagen de ejecución
+FROM eclipse-temurin:25-jre-alpine
 WORKDIR /app
 COPY --from=build /app/build/libs/*.jar app.jar
 EXPOSE 8080
