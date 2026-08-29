@@ -12,7 +12,7 @@ export class AppError extends Error {
 }
 
 export function errorHandler(
-  err: Error,
+  err: any,
   req: Request,
   res: Response,
   next: NextFunction
@@ -33,5 +33,10 @@ export function errorHandler(
   }
 
   console.error('Unhandled Error:', err);
-  res.status(500).json({ error: 'Error interno del servidor' });
+  
+  const errorMessage = err?.message || 'Error interno del servidor';
+  res.status(500).json({
+    error: 'Error interno del servidor',
+    details: process.env.NODE_ENV === 'production' ? errorMessage : err?.stack,
+  });
 }
