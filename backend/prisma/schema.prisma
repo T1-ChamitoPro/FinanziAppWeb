@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  idUsuario     BigInt        @id @default(autoincrement()) @map("id_usuario")
+  nombre        String        @db.VarChar(100)
+  correo        String        @unique @db.VarChar(150)
+  contrasena    String        @db.VarChar(255)
+  transacciones Transaccion[]
+
+  @@map("usuarios")
+}
+
+model Categoria {
+  idCategoria   BigInt        @id @default(autoincrement()) @map("id_categoria")
+  nombre        String        @db.VarChar(50)
+  tipo          String        @db.VarChar(10)
+  transacciones Transaccion[]
+
+  @@map("categorias")
+}
+
+model Transaccion {
+  idTransaccion BigInt    @id @default(autoincrement()) @map("id_transaccion")
+  monto         Decimal   @db.Decimal(12, 2)
+  descripcion   String?   @db.VarChar(255)
+  fecha         DateTime  @db.Date
+  idUsuario     BigInt    @map("id_usuario")
+  idCategoria   BigInt    @map("id_categoria")
+
+  usuario   Usuario   @relation(fields: [idUsuario], references: [idUsuario], onDelete: Cascade)
+  categoria Categoria @relation(fields: [idCategoria], references: [idCategoria], onDelete: Cascade)
+
+  @@map("transacciones")
+}

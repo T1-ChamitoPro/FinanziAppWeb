@@ -1,12 +1,20 @@
-# Paso 1: Compilar la aplicación usando Java 25
-FROM eclipse-temurin:25-jdk-alpine AS build
+# Paso 1: Compilación
+FROM node:20-alpine AS build
 WORKDIR /app
+COPY package*.json ./
+COPY prisma ./prisma/
+RUN npm ci
 COPY . .
-RUN chmod +x gradlew && ./gradlew build -x test --no-daemon
+RUN npx prisma generate
+RUN npm run build
 
-# Paso 2: Crear la imagen de ejecución
-FROM eclipse-temurin:25-jre-alpine
+# Paso 2: Ejecución
+FROM node:20-alpine
 WORKDIR /app
-COPY --from=build /app/build/libs/*.jar app.jar
+COPY package*.json ./
+COPY prisma ./prisma/
+RUN npm ci --omit=dev
+RUN npx prisma generate
+COPY --from=build /app/dist ./dist
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+CMD ["node", "dist/server.js"]
