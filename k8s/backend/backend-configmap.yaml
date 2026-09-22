@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: finanziapp
+  labels:
+    app.kubernetes.io/name: backend
+    app.kubernetes.io/component: api
+    app.kubernetes.io/part-of: finanziapp
+data:
+  PORT: "8080"
+  SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres-service.finanziapp.svc.cluster.local:5432/finanziapp_db"
+  SPRING_JPA_HIBERNATE_DDL_AUTO: "update"
+  LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: "INFO"
+  LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB: "INFO"

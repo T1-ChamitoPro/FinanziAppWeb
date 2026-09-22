@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+  namespace: finanziapp
+  labels:
+    app.kubernetes.io/name: frontend
+    app.kubernetes.io/component: ui
+    app.kubernetes.io/part-of: finanziapp
+spec:
+  type: ClusterIP # Cambiar a NodePort o LoadBalancer según el proveedor si no usas Ingress
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector:
+    app: frontend

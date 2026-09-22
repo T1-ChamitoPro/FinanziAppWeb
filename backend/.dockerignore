@@ -1,0 +1,15 @@
+.gradle
+build
+out
+.git
+.gitignore
+.vscode
+.idea
+*.log
+node_modules
+dist
+.env
+.env.local
+Dockerfile*
+docker-compose*
+README.md

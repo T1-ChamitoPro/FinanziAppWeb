@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: finanziapp
+  labels:
+    app.kubernetes.io/name: finanziapp
+    app.kubernetes.io/part-of: finanziapp-web

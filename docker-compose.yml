@@ -1,0 +1,75 @@
+services:
+  # ==========================================
+  # Base de Datos: PostgreSQL 17
+  # ==========================================
+  postgres:
+    image: postgres:17-alpine
+    container_name: finanziapp-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-finanziapp_db}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-finanziapp_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - finanziapp-network
+
+  # ==========================================
+  # Backend: Spring Boot 4 / Java 25
+  # ==========================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: finanziapp-backend
+    restart: unless-stopped
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-finanziapp_db}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      PORT: 8080
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB: INFO
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - finanziapp-network
+
+  # ==========================================
+  # Frontend: React 19 / Vite / Nginx
+  # ==========================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8080/api}
+    container_name: finanziapp-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-80}:80"
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - finanziapp-network
+
+volumes:
+  postgres_data:
+    name: finanziapp_postgres_data
+
+networks:
+  finanziapp-network:
+    name: finanziapp-network
+    driver: bridge
